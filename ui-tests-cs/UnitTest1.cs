@@ -1,28 +1,19 @@
-using Microsoft.Playwright.MSTest;
-
 namespace ui_tests_cs;
 
 [TestClass]
-public class UnitTest1 : PageTest
+public class UnitTest1 : TestingCore
 {
     [TestMethod]
     public async Task ShouldDownloadTextFile()
     {
       await Page.GotoAsync("http://localhost:4500");
 
-      var tasks = new[] {
-        Page.WaitForDownloadAsync(),
-        Page.Locator("[data-qa=btn-download]").ClickAsync()
-      };
+      var csvFile = await DownloadCSVFile("[data-qa=btn-download]");
 
-      await Task.WhenAll(tasks);
+      string colHeader0 = csvFile.GetHeader(0);
+      Assert.AreEqual(colHeader0, "Header0");
 
-      var downloadTask = tasks[0] as Task<Microsoft.Playwright.IDownload>;
-      Assert.IsNotNull(downloadTask);
-
-      var d = downloadTask.Result;
-      string? filePath = await d.PathAsync();
-      Assert.IsNotNull(filePath);
-      Assert.AreEqual(File.ReadAllText(filePath), "Download test");
+      string dataCell0 = csvFile.GetDataCell(0, 0);
+      Assert.AreEqual(dataCell0, "Cell0");
     }
 }

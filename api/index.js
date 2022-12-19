@@ -11,7 +11,7 @@ app.get('/', (req, res) => {
 })
 
 app.get('/download', (req, res) => {
-  var text = 'Download test'
+  var text = 'Header0,Header1\nCell0,Cell1'
   res.attachment('filename.txt')
   res.type('txt')
   res.send(text)
